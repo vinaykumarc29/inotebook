@@ -2,9 +2,13 @@ const express = require("express");
 const User = require("../models/Users");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const secretKey = "Vin@y$";
 
 router.post(
   "/signup",
+  // express validator usage Applies Conditions To Fields
   [
     check("Name")
       .notEmpty()
@@ -28,19 +32,86 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+    // Avoids Duplication and gives accurate error that email aleady exists
+
+    let newUser = await User.findOne({ Email: Email });
+    if (newUser) {
+      res.status(400).json("A User Already Exists With Same Email");
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(Password, 10); //password hashing
+
+    // User Data being stored
 
     try {
-      const newUser = await User.create({
+      newUser = await User.create({
         Name: Name,
         Email: Email,
-        Password: Password,
+        Password: hashedPassword,
       });
 
-      res.status(201).json(newUser);
+      // creating a jwt token
 
+      const authToken = jwt.sign(
+        {
+          user_id: newUser._id,
+          Email: newUser.Email,
+        },
+        secretKey
+      );
+
+      res.status(201).json({ authToken });
     } catch (error) {
       res.status(500).json({ error: `Error creating user: ${error.message}` });
     }
+  }
+);
+
+router.post(
+  "/login",
+  [
+    check("Email")
+    .isEmail()
+    .withMessage("Enter A Valid Email")
+    .normalizeEmail(),
+    check("Password")
+      .notEmpty()
+      .withMessage("Password cannot be empty")
+      .isLength({ min: 6 })
+      .withMessage("Password Should Contain Atleast 6 Characters"),
+  ],
+  async(req, res) => {
+    const { Email  ,Password } = req.body ;
+// checks erros in input fields
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    //Finding user
+    const user = await User.findOne({Email});
+    if(!user){
+      return res.status(400).json("User Not Found");
+      
+    }
+    // checking password
+    const checkPass = await  bcrypt.compare(Password,user.Password);
+    if(!checkPass){
+      return res.status(400).json("Incorrect Password");
+    }
+
+    //sending token after authorization completed
+    const authToken = jwt.sign(
+      {
+        user_id: user._id,
+        Email: user.Email,
+      },
+      secretKey
+    );
+
+    res.status(201).json({ authToken });
+    
   }
 );
 
