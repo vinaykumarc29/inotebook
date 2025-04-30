@@ -4,11 +4,13 @@ const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const fetchuser = require("../middleware/fetchuser");
 const secretKey = "Vin@y$";
 
+// route no 1 for user singup and entry in database
 router.post(
   "/signup",
-  // express validator usage Applies Conditions To Fields
+  // express validator usage - Applies Conditions To Fields
   [
     check("Name")
       .notEmpty()
@@ -68,36 +70,36 @@ router.post(
   }
 );
 
+//Route no 2 for user login
 router.post(
   "/login",
   [
     check("Email")
-    .isEmail()
-    .withMessage("Enter A Valid Email")
-    .normalizeEmail(),
+      .isEmail()
+      .withMessage("Enter A Valid Email")
+      .normalizeEmail(),
     check("Password")
       .notEmpty()
       .withMessage("Password cannot be empty")
       .isLength({ min: 6 })
       .withMessage("Password Should Contain Atleast 6 Characters"),
   ],
-  async(req, res) => {
-    const { Email  ,Password } = req.body ;
-// checks erros in input fields
+  async (req, res) => {
+    const { Email, Password } = req.body;
+    // checks erros in input fields
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     //Finding user
-    const user = await User.findOne({Email});
-    if(!user){
+    const user = await User.findOne({ Email });
+    if (!user) {
       return res.status(400).json("User Not Found");
-      
     }
     // checking password
-    const checkPass = await  bcrypt.compare(Password,user.Password);
-    if(!checkPass){
+    const checkPass = await bcrypt.compare(Password, user.Password);
+    if (!checkPass) {
       return res.status(400).json("Incorrect Password");
     }
 
@@ -111,8 +113,26 @@ router.post(
     );
 
     res.status(201).json({ authToken });
-    
   }
 );
+
+//route no 3 to getuser
+router.post("/getuser", fetchuser, async(req, res) => {
+
+try {
+  const  userId = req.user.user_id;
+  console.log(userId);
+  const user = await User.findOne({ _id:userId }).select("-Password");
+  console.log(user);
+  res.status(200).json(user);
+  
+} catch (error) {
+  console.log(error);
+  res.status(400).send({error});
+  
+}
+
+
+});
 
 module.exports = router;

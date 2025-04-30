@@ -1,6 +1,7 @@
 const express = require("express");
 const ConnectionToMongodb = require("./mongodb");
-const router = require("./routes/auth");
+const authrouter = require("./routes/auth");
+const noderouter = require("./routes/note");
 
 
 ConnectionToMongodb()
@@ -10,7 +11,8 @@ const port =3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/",router)
+app.use("/",authrouter);
+app.use("/note",noderouter);
 
 app.listen(port,()=>{
     console.log(`server Started At port:${port}`)

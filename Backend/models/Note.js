@@ -1,21 +1,27 @@
+const { type } = require("@testing-library/user-event/dist/type");
 const mongoose = require("mongoose");
 const noteSchema = new mongoose.Schema({
     Title:{
         type:String,
     },
-    description:{
+    Description:{
         type:String,
     },
-    tag:{
+    Tag:{
         type:String,
         default:"General"
+    },
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
     },
     Date:{
         type:Date,
         default:Date.now
     }
+
 });
 
-const Notes = mongoose.model("Notes",noteSchema);
+const Note = mongoose.model("Note",noteSchema);
 
-module.exports = Notes
+module.exports = Note
