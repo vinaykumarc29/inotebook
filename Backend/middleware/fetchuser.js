@@ -12,7 +12,7 @@ const fetchuser = (req,res,next)=>{
     }
 
     const data = jwt.verify(token,secretKey);
-    console.log(data);
+
     req.user = data;
 
     next();
