@@ -95,6 +95,27 @@ router.put("/updatenote/:id", fetchuser, async (req, res) => {
   }
 });
 
+// Route no: 4 deletes a node login required
+router.delete("/deletenote/:id", fetchuser, async (req, res) => {
+  try {
+    const _id = req.params.id;
+    let note = await Note.findById(_id);
 
+    if (!note) {
+      return res.status(404).json({ error: "Note not found !!" });
+    }
+
+    if (note.user.toString() !== req.user.user_id) {
+      return res.status(401).json("Not allowed to delete the note");
+    }
+
+    await Note.findByIdAndDelete(_id);
+
+    res.status(200).json({ message: "Note has been deleted" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "something went wrong" });
+  }
+});
 
 module.exports = router;
