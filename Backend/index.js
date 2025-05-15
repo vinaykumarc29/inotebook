@@ -2,16 +2,21 @@ const express = require("express");
 const ConnectionToMongodb = require("./mongodb");
 const authrouter = require("./routes/auth");
 const noderouter = require("./routes/note");
+const cors = require("cors")
 
 
 ConnectionToMongodb()
 
 const app = express();
-const port =3000;
+const port =5000;
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/",authrouter);
+
+
+app.use("/user",authrouter);
 app.use("/note",noderouter);
 
 app.listen(port,()=>{
