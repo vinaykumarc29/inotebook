@@ -2,6 +2,16 @@ import  React,{useState} from "react";
 import NoteContext from "./NoteContext";
 
 const NoteState = (props)=>{
+  const checkAuth = ()=>{
+    const token = localStorage.getItem("token");
+
+    if(!token){
+      return false;
+    }
+    return true
+
+  }
+
     const notesInitial = [
         
   {
@@ -109,7 +119,7 @@ const NoteState = (props)=>{
   const [notes, setnotes] = useState(notesInitial)
 
     return(
-       < NoteContext.Provider value={{notes,setnotes}} >
+       < NoteContext.Provider value={{notes,setnotes,checkAuth}} >
 
         {props.children}
        

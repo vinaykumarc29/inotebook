@@ -26,7 +26,7 @@ export default function Login() {
         localStorage.setItem("token",data.authToken);
         navigate("/");
       }else{
-        alert("Invalid credentials")
+        alert("Invalid credentials");
       }
 
     }catch(error){
