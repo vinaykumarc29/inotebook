@@ -1,12 +1,16 @@
-import React ,{useContext, useState , useEffect} from 'react';
+import React ,{useContext, useState , useEffect,} from 'react';
 import NoteContext from "../context/note/NoteContext";
 import Noteitem from './Noteitem';
 import NoteView from './NoteView';
+import {useNavigate} from 'react-router-dom'
+
 
 
 export default function Notes() {
 
   const context = useContext(NoteContext);
+  const navigate = useNavigate();
+
   const {notes,setnotes,fetchnotes} = context;
   useEffect(()=>{
     fetchnotes();
@@ -14,11 +18,10 @@ export default function Notes() {
 
 
 
-  const [selectedNote, setselectedNote] = useState(null)
+  
 
   const handleClick = (note)=>{
-    console.log("Note opened");
-    setselectedNote(note);
+    navigate(`/note/${note._id}`);
   
   }
 
@@ -26,8 +29,6 @@ export default function Notes() {
   
   return (
     <>
-     {selectedNote && <NoteView note={selectedNote} />}
-
     <div className='container row '>
 
       <h1>Notes</h1>

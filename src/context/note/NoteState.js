@@ -1,49 +1,62 @@
-import  React,{useState,useEffect} from "react";
+import React, { useState,  } from "react";
 import NoteContext from "./NoteContext";
 
-const NoteState = (props)=>{
-  
-    const notesInitial = [];
+const NoteState = (props) => {
+  const notesInitial = [];
 
-    const token = localStorage.getItem("token");
-    const checkAuth = ()=>{
-
-    if(!token){
+  const token = localStorage.getItem("token");
+  const checkAuth = () => {
+    if (!token) {
       return false;
     }
-    return true
-  }
+    return true;
+  };
 
-  const [notes, setnotes] = useState(notesInitial)
+  const [notes, setnotes] = useState(notesInitial);
 
-  const fetchnotes = async()=>{
-    try{
-
-      let response = await fetch("http://localhost:5000/note/fetchallnotes",{
-         method:"get",
-       headers:{
-         "Content-Type": "application/json",
-         "auth-token" : token
-       },
+  // fetches the notes
+  const fetchnotes = async () => {
+    try {
+      let response = await fetch("http://localhost:5000/note/fetchallnotes", {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
       });
-      let notes =await response.json()
+      let notes = await response.json();
       console.log(notes);
       setnotes(notes);
-    }catch(error){
-      
-    }
-  }
+    } catch (error) {}
+  };
+
+  //updates th notes
+  const updatenote = async (id, Title, Desc ,Tag) => {
+    try{
+    await fetch(`http://localhost:5000/note/updatenote/${id}`, {
+      method: "Put",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": token,
+      },
+      body:JSON.stringify({
+        
+        "Title": Title,
+        "Description": Desc,
+        "Tag": Tag,
+      })
+    });
     
+  }catch(error){
+    console.log(error);
+  }
+  };
 
-    return(
-       < NoteContext.Provider value={{notes,setnotes,checkAuth,fetchnotes}} >
-
-        {props.children}
-       
-       </NoteContext.Provider>
-
-
-    )
+  return (
+    <NoteContext.Provider value={{ notes, setnotes, checkAuth, fetchnotes ,updatenote }}>
+      {props.children}
+    </NoteContext.Provider>
+  );
 };
 
 export default NoteState;
