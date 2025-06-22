@@ -63,7 +63,7 @@ export default function NoteView(props) {
 
           <div class=" note-buttons d-flex justify-content-end mt-3 gap-2 ">
             <button class="btn btn-primary " type="button">save</button>
-            <button class="btn btn-outline-danger " type="button">Delete</button>
+            <button class="btn btn-outline-danger" type="button">Delete</button>
           </div>
 
 

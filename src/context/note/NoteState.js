@@ -1,125 +1,42 @@
-import  React,{useState} from "react";
+import  React,{useState,useEffect} from "react";
 import NoteContext from "./NoteContext";
 
 const NoteState = (props)=>{
-  const checkAuth = ()=>{
+  
+    const notesInitial = [];
+
     const token = localStorage.getItem("token");
+    const checkAuth = ()=>{
 
     if(!token){
       return false;
     }
     return true
-
   }
 
-    const notesInitial = [
-        
-  {
-    "_id": "681277a71e504248e46fc063",
-    "Title": "Second Note",
-    "Description": "this is second note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },
-  {
-    "_id": "681277a71e504248e46fc063",
-    "Title": "Third Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },{
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },{
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },{
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },{
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },
-  {
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },{
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },{
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },{
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },{
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },{
-    "_id": "681277a71e504248e46fc063",
-    "Title": "first Note",
-    "Description": "this is first note !!",
-    "Tag": "General",
-    "user": "6811b0d2bd99401f31a58599",
-    "Date": "2025-04-30T19:19:03.897Z",
-    "__v": 0
-  },
-    ]
-
-    
   const [notes, setnotes] = useState(notesInitial)
 
+  const fetchnotes = async()=>{
+    try{
+
+      let response = await fetch("http://localhost:5000/note/fetchallnotes",{
+         method:"get",
+       headers:{
+         "Content-Type": "application/json",
+         "auth-token" : token
+       },
+      });
+      let notes =await response.json()
+      console.log(notes);
+      setnotes(notes);
+    }catch(error){
+      
+    }
+  }
+    
+
     return(
-       < NoteContext.Provider value={{notes,setnotes,checkAuth}} >
+       < NoteContext.Provider value={{notes,setnotes,checkAuth,fetchnotes}} >
 
         {props.children}
        
