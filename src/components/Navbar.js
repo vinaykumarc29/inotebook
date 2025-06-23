@@ -4,6 +4,7 @@ import NoteContext from '../context/note/NoteContext';
 
 
 export default function Navbar() {
+  
   const context = useContext(NoteContext);
   return (
     <>
@@ -11,7 +12,9 @@ export default function Navbar() {
   <div className="container-fluid">
     <Link to="/" className="navbar-brand" >iNotebook</Link>
 
-    {context.checkAuth() ? <div className="dropdown">
+    {context.checkAuth() ? <div className="dropdown d-flex gap-1" >
+      <Link to="/note/newnote"> <button className="btn btn-outline-primary" >AddNote</button></Link>
+     
           <button
             className="btn btn-secondary dropdown-toggle"
             type="button"
@@ -22,9 +25,9 @@ export default function Navbar() {
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
             <li>
-              <a className="dropdown-item" href="#">
+              <Link to="#" className="dropdown-item" >
                 Logout
-              </a>
+              </Link>
             </li>
           </ul>
         </div> :  <div className='d-flex gap-1'>

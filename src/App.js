@@ -5,7 +5,7 @@ import Login from './components/Login';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NoteState from './context/note/NoteState';
 import Noteitem from './components/Noteitem';
-import NoteView from './components/NoteView';
+import NoteView from './components/NoteEditor';
 import Signup from './components/Signup';
 
 
@@ -21,6 +21,8 @@ function App() {
              <Route path='/login' element={<Login />} /> 
              <Route path='/signup' element={<Signup/>}/>
              <Route path='/note/:id' element={<NoteView/>}/>
+             <Route path='/note/newnote' element={<NoteView  iscreate={true}/>}/>
+
 
              
           </Routes>

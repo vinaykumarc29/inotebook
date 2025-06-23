@@ -14,6 +14,7 @@ const NoteState = (props) => {
 
   const [notes, setnotes] = useState(notesInitial);
 
+
   // fetches the notes
   const fetchnotes = async () => {
     try {
@@ -30,7 +31,33 @@ const NoteState = (props) => {
     } catch (error) {}
   };
 
-  //updates th notes
+  //creates new node
+  const createnote = async(Title,Desc,Tag)=>{
+
+    try{
+
+    const response = await fetch("http://localhost:5000/note/addnote",{
+      method:"Post",
+      headers:{
+        "Content-Type": "application/json",
+        "auth-token": token,
+      },
+      body:JSON.stringify({
+        "Title":Title,
+        "Description":Desc,
+        "Tag":Tag
+      })
+    });
+    if(response.ok){
+      console.log("Note Created!");
+    }
+    }catch(error){
+      console.log(error);
+    }
+
+  }
+
+  //updates the notes
   const updatenote = async (id, Title, Desc ,Tag) => {
     try{
     await fetch(`http://localhost:5000/note/updatenote/${id}`, {
@@ -76,8 +103,10 @@ const NoteState = (props) => {
 
   }
 
+
+
   return (
-    <NoteContext.Provider value={{ notes, setnotes, checkAuth, fetchnotes ,updatenote ,deletenote}}>
+    <NoteContext.Provider value={{ notes, setnotes, checkAuth, fetchnotes ,updatenote ,deletenote , createnote}}>
       {props.children}
     </NoteContext.Provider>
   );

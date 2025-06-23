@@ -3,10 +3,12 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import NoteContext from "../context/note/NoteContext";
 import Alert from "./Alert";
 
-export default function NoteView() {
-  const context = useContext(NoteContext);
-  const { notes, fetchnotes, updatenote , deletenote} = context;
+export default function NoteView(props) {
+  const { iscreate } = props;
   const navigate = useNavigate();
+  const context = useContext(NoteContext);
+  const { notes, fetchnotes, updatenote, deletenote ,createnote } = context;
+
   const { id } = useParams();
   const [note, setnote] = useState(null);
   const [saved, setsaved] = useState(true);
@@ -22,24 +24,33 @@ export default function NoteView() {
   }, []);
 
   useEffect(() => {
-    const foundnote = notes.find((note) => {
-      return note._id === id;
-    });
-    setnote(foundnote);
+    if (iscreate) {
+      setnote({});
+      setTitle("");
+      setDesc("");
+      setTag("General");
 
-    if (foundnote) {
-      setTag(foundnote.Tag);
-      setTitle(foundnote.Title);
-      setDesc(foundnote.Description);
+    } else {
 
+      const foundnote = notes.find((note) => {
+        return note._id === id;
+      });
 
+      setnote(foundnote);
+
+      if (foundnote) {
+        setTag(foundnote.Tag);
+        setTitle(foundnote.Title);
+        setDesc(foundnote.Description);
+      }
     }
-
   }, [id, notes]);
 
-
   useEffect(() => {
-    if (note && (Title !== note.Title || Desc !== note.Description || Tag !== note.Tag)) {
+    if (
+      note &&
+      (Title !== note.Title || Desc !== note.Description || Tag !== note.Tag)
+    ) {
       setsaved(false);
     }
   }, [Title, Desc, Tag, note]);
@@ -57,12 +68,15 @@ export default function NoteView() {
     );
   }
 
-  const hanldesave = () => {
-
-    updatenote(id, Title, Desc, Tag);
+  const handlesave = () => {
+    if(iscreate){
+      createnote(Title,Desc,Tag);
+    }else{
+      updatenote(id, Title, Desc, Tag);
+    }
     setsaved(true);
-
-  }
+    navigate("/");
+  };
 
   const handleexit = () => {
     if (saved) {
@@ -70,12 +84,11 @@ export default function NoteView() {
     } else {
       setshowmodal(true);
     }
-  }
+  };
 
-  const handledelete = ()=>{
+  const handledelete = () => {
     SetTriggerDelete(true);
-
-  }
+  };
 
   return (
     <div
@@ -83,7 +96,10 @@ export default function NoteView() {
       style={{ backgroundColor: "#e6f1f1", width: "100vw", height: "100vh" }}
     >
       <div className="mt-4 mb-2 align-self-start">
-        <span className="fs-5 link-dark text-decoration-none" onClick={handleexit}>
+        <span
+          className="fs-5 link-dark text-decoration-none"
+          onClick={handleexit}
+        >
           <i className="fa-solid fa-arrow-left"></i> Go Back To Notes
         </span>
       </div>
@@ -107,11 +123,11 @@ export default function NoteView() {
               setTitle(e.currentTarget.innerText);
             }}
           >
-            <b>{note.Title}</b>
+            <b>{note.Title ||<span className="placeholder-text" >Title</span>}</b>
           </h1>
         </div>
 
-        <div className="note-info my-3">
+        <div className="note-info my-3" hidden={iscreate}>
           <h6>Last Edited :{note.Date}</h6>
         </div>
         <div className=" note-tag conatiner d-flex flex-row align-items-center">
@@ -154,6 +170,7 @@ export default function NoteView() {
             <textarea
               name="note-description"
               className=" form-control rounded-bottom"
+              placeholder="Enter descripion here"
               id="note-description"
               value={Desc}
               style={{
@@ -171,8 +188,7 @@ export default function NoteView() {
           </div>
           {/* Buttons */}
 
-          <div className="d-flex conatiner justify-content-between  ">
-
+          <div className="d-flex conatiner justify-content-between">
             <div className="status">
               {saved === true ? (
                 <p className="text-success mb-0 fw-semibold">✔ Saved</p>
@@ -180,51 +196,51 @@ export default function NoteView() {
                 <p className="text-danger mb-0 fw-semibold">✘ Not Saved</p>
               )}
             </div>
-            <div className=" note-buttons d-flex   mt-3 gap-2 ">
-
+            <div className=" note-buttons d-flex mt-3 gap-2 ">
               <button
                 className="btn btn-primary"
-                onClick={hanldesave}
+                onClick={handlesave}
                 type="button"
               >
                 save
               </button>
 
-              <button className="btn btn-outline-danger" onClick={handledelete} type="button">
+              <button
+                className="btn btn-outline-danger"
+                onClick={handledelete}
+                hidden={iscreate}
+                type="button"
+              >
                 Delete
               </button>
             </div>
-
-
           </div>
-
-
         </div>
       </div>
-      <Alert show={showmodal}
+      <Alert
+        show={showmodal}
         onsave={() => {
-          hanldesave();
+          handlesave();
           setshowmodal(false);
           navigate("/");
         }}
-
         oncancel={() => {
           setshowmodal(false);
           navigate("/");
         }}
         message="Save Changes Made In Note ??"
-
       />
-      <Alert show={TriggerDelete} onsave={()=>{
-        deletenote(id);
-        SetTriggerDelete(false);
-        navigate("/");
-      }}
-      oncancel={()=>{
-        SetTriggerDelete(false);
-      }}
-      message="Are You Sure To Delete the Note ?"
-
+      <Alert
+        show={TriggerDelete}
+        onsave={() => {
+          deletenote(id);
+          SetTriggerDelete(false);
+          navigate("/");
+        }}
+        oncancel={() => {
+          SetTriggerDelete(false);
+        }}
+        message="Are You Sure To Delete the Note ?"
       />
     </div>
   );
