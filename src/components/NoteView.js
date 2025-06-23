@@ -5,12 +5,13 @@ import Alert from "./Alert";
 
 export default function NoteView() {
   const context = useContext(NoteContext);
-  const { notes, fetchnotes, updatenote } = context;
+  const { notes, fetchnotes, updatenote , deletenote} = context;
   const navigate = useNavigate();
   const { id } = useParams();
   const [note, setnote] = useState(null);
   const [saved, setsaved] = useState(true);
-  const [showmodal, setshowmodal] = useState(false)
+  const [showmodal, setshowmodal] = useState(false);
+  const [TriggerDelete, SetTriggerDelete] = useState(false);
 
   const [Tag, setTag] = useState("General");
   const [Title, setTitle] = useState(null);
@@ -69,6 +70,11 @@ export default function NoteView() {
     } else {
       setshowmodal(true);
     }
+  }
+
+  const handledelete = ()=>{
+    SetTriggerDelete(true);
+
   }
 
   return (
@@ -184,7 +190,7 @@ export default function NoteView() {
                 save
               </button>
 
-              <button className="btn btn-outline-danger" type="button">
+              <button className="btn btn-outline-danger" onClick={handledelete} type="button">
                 Delete
               </button>
             </div>
@@ -207,6 +213,17 @@ export default function NoteView() {
           navigate("/");
         }}
         message="Save Changes Made In Note ??"
+
+      />
+      <Alert show={TriggerDelete} onsave={()=>{
+        deletenote(id);
+        SetTriggerDelete(false);
+        navigate("/");
+      }}
+      oncancel={()=>{
+        SetTriggerDelete(false);
+      }}
+      message="Are You Sure To Delete the Note ?"
 
       />
     </div>

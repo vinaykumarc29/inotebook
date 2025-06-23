@@ -52,8 +52,32 @@ const NoteState = (props) => {
   }
   };
 
+
+  //deleting notes
+
+  const deletenote = async(id)=>{
+
+    try{
+      const response = await fetch(`http://localhost:5000/note/deletenote/${id}`,{
+       method:"Delete",
+       headers:{
+         "auth-token":token,
+         "Content-Type": "application/json",
+       }
+     });
+ 
+     if(response.ok){
+       console.log("Note:",id," Deleted!!");
+     }
+      
+    }catch(error){
+      console.log(error);
+    }
+
+  }
+
   return (
-    <NoteContext.Provider value={{ notes, setnotes, checkAuth, fetchnotes ,updatenote }}>
+    <NoteContext.Provider value={{ notes, setnotes, checkAuth, fetchnotes ,updatenote ,deletenote}}>
       {props.children}
     </NoteContext.Provider>
   );
