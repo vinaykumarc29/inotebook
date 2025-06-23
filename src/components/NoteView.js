@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import NoteContext from "../context/note/NoteContext";
+import Alert from "./Alert";
 
 export default function NoteView() {
   const context = useContext(NoteContext);
@@ -9,6 +10,7 @@ export default function NoteView() {
   const { id } = useParams();
   const [note, setnote] = useState(null);
   const [saved, setsaved] = useState(true);
+  const [showmodal, setshowmodal] = useState(false)
 
   const [Tag, setTag] = useState("General");
   const [Title, setTitle] = useState(null);
@@ -65,13 +67,7 @@ export default function NoteView() {
     if (saved) {
       navigate("/");
     } else {
-      const confirm = window.confirm("Changes will be saved !!");
-      if (confirm) {
-        hanldesave();
-        navigate("/");
-      } else {
-        navigate("/");
-      }
+      setshowmodal(true);
     }
   }
 
@@ -199,6 +195,20 @@ export default function NoteView() {
 
         </div>
       </div>
+      <Alert show={showmodal}
+        onsave={() => {
+          hanldesave();
+          setshowmodal(false);
+          navigate("/");
+        }}
+
+        oncancel={() => {
+          setshowmodal(false);
+          navigate("/");
+        }}
+        message="Save Changes Made In Note ??"
+
+      />
     </div>
   );
 }

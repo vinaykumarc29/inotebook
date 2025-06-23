@@ -117,7 +117,7 @@ router.post(
 );
 
 //route no 3 to getuser
-router.post("/getuser", fetchuser, async(req, res) => {
+router.get("/getuser", fetchuser, async(req, res) => {
 
 try {
   const  userId = req.user.user_id;
