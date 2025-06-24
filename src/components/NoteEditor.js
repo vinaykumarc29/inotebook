@@ -2,15 +2,17 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import NoteContext from "../context/note/NoteContext";
 import Alert from "./Alert";
+import Toasts from "./Toasts";
 
-export default function NoteView(props) {
+export default function NoteEditor(props) {
   const { iscreate } = props;
   const navigate = useNavigate();
   const context = useContext(NoteContext);
-  const { notes, fetchnotes, updatenote, deletenote ,createnote } = context;
+  const { notes, fetchnotes, updatenote, deletenote, createnote } = context;
 
   const { id } = useParams();
   const [note, setnote] = useState(null);
+
   const [saved, setsaved] = useState(true);
   const [showmodal, setshowmodal] = useState(false);
   const [TriggerDelete, SetTriggerDelete] = useState(false);
@@ -29,9 +31,7 @@ export default function NoteView(props) {
       setTitle("");
       setDesc("");
       setTag("General");
-
     } else {
-
       const foundnote = notes.find((note) => {
         return note._id === id;
       });
@@ -69,12 +69,13 @@ export default function NoteView(props) {
   }
 
   const handlesave = () => {
-    if(iscreate){
-      createnote(Title,Desc,Tag);
-    }else{
+    if (iscreate) {
+      createnote(Title, Desc, Tag);
+    } else {
       updatenote(id, Title, Desc, Tag);
     }
     setsaved(true);
+    props.triggertoast("Note Saved !!");
     navigate("/");
   };
 
@@ -123,7 +124,9 @@ export default function NoteView(props) {
               setTitle(e.currentTarget.innerText);
             }}
           >
-            <b>{note.Title ||<span className="placeholder-text" >Title</span>}</b>
+            <b>
+              {note.Title || <span className="placeholder-text">Title</span>}
+            </b>
           </h1>
         </div>
 
@@ -235,6 +238,7 @@ export default function NoteView(props) {
         onsave={() => {
           deletenote(id);
           SetTriggerDelete(false);
+          props.triggertoast("Note Deleted !!");
           navigate("/");
         }}
         oncancel={() => {

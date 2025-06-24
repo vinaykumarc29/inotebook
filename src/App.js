@@ -5,30 +5,34 @@ import Login from './components/Login';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NoteState from './context/note/NoteState';
 import Noteitem from './components/Noteitem';
-import NoteView from './components/NoteEditor';
+import NoteEditor from './components/NoteEditor';
 import Signup from './components/Signup';
+import Alert from './components/Alert';
+import Toasts from './components/Toasts';
+import { useState } from 'react';
 
 
 function App() {
+    const [Toast , setToast] = useState({show:false,message:""});
+
+    const triggertoast = (message)=>{
+      setToast({show:true,message:message});
+      setTimeout(()=>{setToast({show:false,message:""})},5000);
+    }
   return (
     <>
       <NoteState>
-        <div className="" style={{backgroundColor:"#e6f1f1",height:"100vh"}}>
+        <Toasts show={Toast.show} message={Toast.message}/>
         <Router>
           <Navbar />
           <Routes>
              <Route path='/' element={<Home />} /> 
              <Route path='/login' element={<Login />} /> 
              <Route path='/signup' element={<Signup/>}/>
-             <Route path='/note/:id' element={<NoteView/>}/>
-             <Route path='/note/newnote' element={<NoteView  iscreate={true}/>}/>
-
-
-             
+             <Route path='/note/:id' element={<NoteEditor triggertoast={triggertoast}/>}/>
+             <Route path='/note/newnote' element={<NoteEditor  iscreate={true}/>}/>
           </Routes>
-     {/* <NoteView/> */}
         </Router>
-        </div>
       </NoteState>
     </>
   );

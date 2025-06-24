@@ -1,5 +1,5 @@
 import React from 'react'
-import NoteView from './NoteEditor';
+import NoteEditor from './NoteEditor';
 
 export default function Noteitem(props) {
     const { Title, Description} = props.note;
