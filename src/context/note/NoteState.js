@@ -3,10 +3,14 @@ import NoteContext from "./NoteContext";
 
 const NoteState = (props) => {
   const notesInitial = [];
+  const [token , settoken] = useState(localStorage.getItem("token") || "Null");
+  // const token = localStorage.getItem("token");
+  const [username,setusername] = useState("");
 
-  const token = localStorage.getItem("token");
+
+
   const checkAuth = () => {
-    if (!token) {
+    if (token === "Null") {
       return false;
     }
     return true;
@@ -26,7 +30,7 @@ const NoteState = (props) => {
         },
       });
       let notes = await response.json();
-      console.log(notes);
+     
       setnotes(notes);
     } catch (error) {}
   };
@@ -103,10 +107,24 @@ const NoteState = (props) => {
 
   }
 
+  // Get user
+  const getuser = async()=>{
+    const response = await fetch("http://localhost:5000/user/getuser",{
+      method:"get",
+       headers:{
+         "auth-token":token,
+         "Content-Type": "application/json",
+       }
+    });
+    const data = await response.json();
+    const user = data.Name;
+    setusername(user);
+
+  }
 
 
   return (
-    <NoteContext.Provider value={{ notes, setnotes, checkAuth, fetchnotes ,updatenote ,deletenote , createnote}}>
+    <NoteContext.Provider value={{ notes, setnotes, checkAuth, fetchnotes ,updatenote ,deletenote , createnote ,getuser, username,setusername , token ,settoken}}>
       {props.children}
     </NoteContext.Provider>
   );

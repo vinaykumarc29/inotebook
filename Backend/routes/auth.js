@@ -121,9 +121,9 @@ router.get("/getuser", fetchuser, async(req, res) => {
 
 try {
   const  userId = req.user.user_id;
-  console.log(userId);
+  // console.log(userId);
   const user = await User.findOne({ _id:userId }).select("-Password");
-  console.log(user);
+  // console.log(user);
   res.status(200).json(user);
   
 } catch (error) {

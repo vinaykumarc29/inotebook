@@ -11,14 +11,11 @@ export default function Notes() {
   const context = useContext(NoteContext);
   const navigate = useNavigate();
 
-  const {notes,setnotes,fetchnotes} = context;
+  const {notes,setnotes,fetchnotes,token,checkAuth} = context;
   useEffect(()=>{
+    if(checkAuth())
     fetchnotes();
-  },[]);
-
-
-
-  
+  },[token]);
 
   const handleClick = (note)=>{
     navigate(`/note/${note._id}`);

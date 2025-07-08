@@ -8,7 +8,7 @@ export default function NoteEditor(props) {
   const { iscreate } = props;
   const navigate = useNavigate();
   const context = useContext(NoteContext);
-  const { notes, fetchnotes, updatenote, deletenote, createnote } = context;
+  const { notes, fetchnotes, updatenote, deletenote, createnote , token} = context;
 
   const { id } = useParams();
   const [note, setnote] = useState(null);
@@ -23,7 +23,7 @@ export default function NoteEditor(props) {
 
   useEffect(() => {
     fetchnotes(); // fetch data on mount
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (iscreate) {
@@ -192,7 +192,7 @@ export default function NoteEditor(props) {
           {/* Buttons */}
 
           <div className="d-flex conatiner justify-content-between">
-            <div className="status">
+            <div className="status mt-3">
               {saved === true ? (
                 <p className="text-success mb-0 fw-semibold">✔ Saved</p>
               ) : (

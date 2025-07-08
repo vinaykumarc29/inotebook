@@ -1,7 +1,12 @@
-import React ,{useState} from 'react'
-import {useNavigate} from 'react-router-dom'
+import React ,{useContext, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import NoteContext from '../context/note/NoteContext';
+
 
 export default function Login() {
+  const context = useContext(NoteContext);
+  const {token,settoken} = context;
+
   const [credentials, setcreadentials] = useState({Email:"",Password:""});
   let navigate = useNavigate();
 
@@ -24,6 +29,7 @@ export default function Login() {
 
       if(response.ok){
         localStorage.setItem("token",data.authToken);
+        settoken(data.authToken);
         navigate("/");
       }else{
         alert("Invalid credentials");

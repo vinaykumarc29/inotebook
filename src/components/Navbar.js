@@ -1,18 +1,37 @@
-import React,{useContext} from 'react'; 
-import { Link } from 'react-router-dom';
+import React,{useContext,useEffect} from 'react'; 
+import { Link,useNavigate } from 'react-router-dom';
 import NoteContext from '../context/note/NoteContext';
 
 
 export default function Navbar() {
   
   const context = useContext(NoteContext);
+  const {getuser,checkAuth,username,token,settoken} = context;
+  const Navigate = useNavigate();
+
+  const handleLogout = ()=>{
+    localStorage.removeItem("token");
+    settoken("Null");
+    Navigate("/");
+   
+
+  }
+  
+
+  useEffect(()=>{
+    if(checkAuth()){
+      getuser();
+    }
+  
+  },[token])
+
   return (
     <>
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
   <div className="container-fluid">
     <Link to="/" className="navbar-brand" >iNotebook</Link>
 
-    {context.checkAuth() ? <div className="dropdown d-flex gap-1" >
+    {checkAuth() ? <div className="dropdown d-flex gap-1" >
       <Link to="/note/newnote"> <button className="btn btn-outline-primary" >AddNote</button></Link>
      
           <button
@@ -21,13 +40,13 @@ export default function Navbar() {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            User
+           {username}
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
             <li>
-              <Link to="#" className="dropdown-item" >
+              <button className="dropdown-item" onClick={handleLogout} >
                 Logout
-              </Link>
+              </button>
             </li>
           </ul>
         </div> :  <div className='d-flex gap-1'>
